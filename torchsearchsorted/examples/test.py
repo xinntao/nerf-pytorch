@@ -1,6 +1,7 @@
-import torch
-from torchsearchsorted import searchsorted, numpy_searchsorted
 import time
+
+import torch
+from torchsearchsorted import numpy_searchsorted, searchsorted
 
 if __name__ == '__main__':
     # defining the number of tests
@@ -18,9 +19,8 @@ if __name__ == '__main__':
     test_CPU = None
 
     for ntest in range(ntests):
-        print("\nLooking for %dx%d values in %dx%d entries" % (nrows_v, nvalues,
-                                                             nrows_a,
-                                                             nsorted_values))
+        print("\nLooking for %dx%d values in %dx%d entries" %
+              (nrows_v, nvalues, nrows_a, nsorted_values))
 
         side = 'right'
         # generate a matrix with sorted rows
@@ -34,15 +34,15 @@ if __name__ == '__main__':
 
         t0 = time.time()
         test_NP = torch.tensor(numpy_searchsorted(a, v, side))
-        print('NUMPY:  searchsorted in %0.3fms' % (1000*(time.time()-t0)))
+        print('NUMPY:  searchsorted in %0.3fms' % (1000 * (time.time() - t0)))
         t0 = time.time()
         test_CPU = searchsorted(a, v, test_CPU, side)
-        print('CPU:  searchsorted in %0.3fms' % (1000*(time.time()-t0)))
+        print('CPU:  searchsorted in %0.3fms' % (1000 * (time.time() - t0)))
         # compute the difference between both
-        error_CPU = torch.norm(test_NP.double()
-                               - test_CPU.double()).numpy()
+        error_CPU = torch.norm(test_NP.double() - test_CPU.double()).numpy()
         if error_CPU:
-            import ipdb; ipdb.set_trace()
+            import ipdb
+            ipdb.set_trace()
         print('    difference between CPU and NUMPY: %0.3f' % error_CPU)
 
         if not torch.cuda.is_available():
@@ -57,10 +57,11 @@ if __name__ == '__main__':
             t0 = time.time()
             test_GPU = searchsorted(a, v, test_GPU, side)
             torch.cuda.synchronize()
-            print('GPU:  searchsorted in %0.3fms' % (1000*(time.time()-t0)))
+            print('GPU:  searchsorted in %0.3fms' % (1000 *
+                                                     (time.time() - t0)))
 
             # compute the difference between both
-            error_CUDA = torch.norm(test_NP.to('cuda').double()
-                               - test_GPU.double()).cpu().numpy()
+            error_CUDA = torch.norm(
+                test_NP.to('cuda').double() - test_GPU.double()).cpu().numpy()
 
             print('    difference between GPU and NUMPY: %0.3f' % error_CUDA)

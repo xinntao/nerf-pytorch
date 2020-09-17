@@ -1,8 +1,8 @@
 import timeit
 
-import torch
 import numpy as np
-from torchsearchsorted import searchsorted, numpy_searchsorted
+import torch
+from torchsearchsorted import numpy_searchsorted, searchsorted
 
 B = 5_000
 A = 300
@@ -18,8 +18,7 @@ print(
     f'- reporting fastest time of {repeats} runs',
     f'- each run executes searchsorted {number} times',
     sep='\n',
-    end='\n\n'
-)
+    end='\n\n')
 
 
 def get_arrays():
@@ -37,18 +36,19 @@ def get_tensors(device):
         torch.cuda.synchronize()
     return a, v, out
 
-def searchsorted_synchronized(a,v,out=None,side='left'):
-    out = searchsorted(a,v,out,side)
+
+def searchsorted_synchronized(a, v, out=None, side='left'):
+    out = searchsorted(a, v, out, side)
     torch.cuda.synchronize()
     return out
+
 
 numpy = timeit.repeat(
     stmt="numpy_searchsorted(a, v, side='left')",
     setup="a, v, out = get_arrays()",
     globals=globals(),
     repeat=repeats,
-    number=number
-)
+    number=number)
 print('Numpy: ', min(numpy), sep='\t')
 
 cpu = timeit.repeat(
@@ -56,8 +56,7 @@ cpu = timeit.repeat(
     setup="a, v, out = get_tensors(device='cpu')",
     globals=globals(),
     repeat=repeats,
-    number=number
-)
+    number=number)
 print('CPU: ', min(cpu), sep='\t')
 
 if torch.cuda.is_available():
@@ -66,6 +65,5 @@ if torch.cuda.is_available():
         setup="a, v, out = get_tensors(device='cuda')",
         globals=globals(),
         repeat=repeats,
-        number=number
-    )
+        number=number)
     print('CUDA: ', min(gpu), sep='\t')

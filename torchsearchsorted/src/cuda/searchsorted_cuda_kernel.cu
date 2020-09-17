@@ -47,11 +47,11 @@ int binary_search(scalar_t *a, int64_t row, scalar_t val, int64_t ncol, bool sid
 
   the `a` matrix is assumed sorted in increasing order, row-wise
 
-  Returns 
+  Returns
   * -1 if `val` is smaller than the smallest value found within that row of `a`
   * `ncol` - 1 if `val` is larger than the largest element of that row of `a`
   * Otherwise, return the column index `res` such that:
-    - a[row, col] < val <= a[row, col+1]. (if side_left), or 
+    - a[row, col] < val <= a[row, col+1]. (if side_left), or
     - a[row, col] < val <= a[row, col+1] (if not side_left).
    */
 

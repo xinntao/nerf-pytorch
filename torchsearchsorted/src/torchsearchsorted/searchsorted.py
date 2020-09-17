@@ -17,13 +17,13 @@ except ImportError:
     SEARCHSORTED_GPU_AVAILABLE = False
 
 
-def searchsorted(a: torch.Tensor, v: torch.Tensor,
+def searchsorted(a: torch.Tensor,
+                 v: torch.Tensor,
                  out: Optional[torch.LongTensor] = None,
                  side='left') -> torch.LongTensor:
     assert len(a.shape) == 2, "input `a` must be 2-D."
     assert len(v.shape) == 2, "input `v` mus(t be 2-D."
-    assert (a.shape[0] == v.shape[0]
-            or a.shape[0] == 1
+    assert (a.shape[0] == v.shape[0] or a.shape[0] == 1
             or v.shape[0] == 1), ("`a` and `v` must have the same number of "
                                   "rows or one of them must have only one ")
     assert a.device == v.device, '`a` and `v` must be on the same device'
@@ -38,13 +38,14 @@ def searchsorted(a: torch.Tensor, v: torch.Tensor,
         out = torch.empty(result_shape, device=v.device, dtype=torch.long)
 
     if a.is_cuda and not SEARCHSORTED_GPU_AVAILABLE:
-        raise Exception('torchsearchsorted on CUDA device is asked, but it seems '
-                        'that it is not available. Please install it')
+        raise Exception(
+            'torchsearchsorted on CUDA device is asked, but it seems '
+            'that it is not available. Please install it')
     if not a.is_cuda and not SEARCHSORTED_CPU_AVAILABLE:
         raise Exception('torchsearchsorted on CPU is not available. '
                         'Please install it.')
 
-    left_side = 1 if side=='left' else 0
+    left_side = 1 if side == 'left' else 0
     if a.is_cuda:
         searchsorted_cuda_wrapper(a, v, out, left_side)
     else:
